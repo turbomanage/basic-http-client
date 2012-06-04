@@ -128,7 +128,7 @@ public class AsyncHttpClient extends AbstractHttpClient {
      * @throws HttpRequestException
      */
     public HttpResponse tryMany(HttpRequest httpRequest) throws HttpRequestException {
-        int n = maxRetries;
+        int n = getMaxRetries();
         HttpResponse res = null;
         while (n > 0) {
             try {
@@ -153,6 +153,14 @@ public class AsyncHttpClient extends AbstractHttpClient {
             }
         }
         return res;
+    }
+
+    public int getMaxRetries() {
+        return maxRetries;
+    }
+
+    public void setMaxRetries(int maxRetries) {
+        this.maxRetries = maxRetries;
     }
 
 }
