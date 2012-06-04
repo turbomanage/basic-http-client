@@ -61,7 +61,7 @@ public abstract class AbstractHttpClient {
      * @param httpRequest
      * @return Response object
      */
-    protected HttpResponse execute(HttpRequest httpRequest) {
+    public HttpResponse execute(HttpRequest httpRequest) {
         HttpResponse httpResponse = null;
         try {
             httpResponse = doHttpMethod(httpRequest.getPath(),
