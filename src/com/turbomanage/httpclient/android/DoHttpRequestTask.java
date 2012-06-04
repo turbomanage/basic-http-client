@@ -53,7 +53,7 @@ public class DoHttpRequestTask extends AsyncTask<HttpRequest, Void, HttpResponse
 
     @Override
     protected void onPostExecute(HttpResponse result) {
-        callback.onSuccess(result);
+        callback.onComplete(result);
     }
 
     @Override

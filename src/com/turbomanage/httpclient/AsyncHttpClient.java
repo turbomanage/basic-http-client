@@ -136,7 +136,10 @@ public class AsyncHttpClient extends AbstractHttpClient {
                 res = doHttpMethod(httpRequest.getPath(),
                         httpRequest.getHttpMethod(), httpRequest.getContentType(),
                         httpRequest.getContent());
-                n = 0;
+                if (res != null) {
+                    n = 0;
+                    return res;
+                }
                 // TODO This should be the only kind we get--can we ensure?
             } catch (HttpRequestException e) {
                 if (isTimeoutException(e)) {
@@ -152,7 +155,7 @@ public class AsyncHttpClient extends AbstractHttpClient {
                 n--;
             }
         }
-        return res;
+        return null;
     }
 
     public int getMaxRetries() {
