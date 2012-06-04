@@ -127,7 +127,7 @@ public abstract class AbstractHttpClient {
             try {
                 httpResponse = readErrorStream(uc);
             } catch (Exception ee) {
-                // Swallow to show first cause only
+                // Must catch IOException, but swallow to show first cause only
             } finally {
                 throw new HttpRequestException(e, httpResponse);
             }
@@ -176,9 +176,9 @@ public abstract class AbstractHttpClient {
      * @param uc
      * @param content
      * @return request status
-     * @throws IOException
+     * @throws Exception in order to force calling code to deal with possible NPEs also
      */
-    protected int writeOutputStream(HttpURLConnection uc, byte[] content) throws IOException {
+    protected int writeOutputStream(HttpURLConnection uc, byte[] content) throws Exception {
         OutputStream out = null;
         try {
             out = uc.getOutputStream();
@@ -187,22 +187,18 @@ public abstract class AbstractHttpClient {
             }
             return uc.getResponseCode();
         } finally {
-            // TODO nested try-catch not necessary since method throws
-            // IOException
-            // May want to wrap & swallow to avoid dup exceptions
-            // Without a catch cause above, the close exception occurs before
-            // orig bubbles up
+            // catch not necessary since method throws Exception
             if (out != null) {
                 try {
                     out.close();
                 } catch (Exception e) {
-                    // Swallow it to avoid dups
+                    // Swallow to show first cause only
                 }
             }
         }
     }
 
-    protected HttpResponse readInputStream(HttpURLConnection uc) throws IOException {
+    protected HttpResponse readInputStream(HttpURLConnection uc) throws Exception {
         InputStream in = null;
         byte[] responseBody = null;
         try {
@@ -222,7 +218,7 @@ public abstract class AbstractHttpClient {
         }
     }
 
-    protected HttpResponse readErrorStream(HttpURLConnection uc) throws IOException {
+    protected HttpResponse readErrorStream(HttpURLConnection uc) throws Exception {
         InputStream err = null;
         byte[] responseBody = null;
         try {

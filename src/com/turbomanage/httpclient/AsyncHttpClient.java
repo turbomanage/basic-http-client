@@ -151,23 +151,19 @@ public class AsyncHttpClient extends AbstractHttpClient {
                         httpRequest.getHttpMethod(), httpRequest.getContentType(),
                         httpRequest.getContent());
                 if (res != null) {
-                    n = 0;
                     return res;
                 }
-                // TODO This should be the only kind we get--can we ensure?
             } catch (HttpRequestException e) {
                 if (isTimeoutException(e)) {
                     // try again with exponential backoff
                     setConnectionTimeout(connectionTimeout * 2);
                 } else {
-                    n = 0;
                     requestHandler.onError(res, e);
                     // rethrow to caller
                     throw e;
                 }
-            } finally {
-                n--;
             }
+            n--;
         }
         return null;
     }
