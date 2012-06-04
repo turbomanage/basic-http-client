@@ -13,11 +13,13 @@ import java.net.URL;
  * intended to be used for simple requests with small amounts of data only (a
  * few kB), as it does no buffering, chunking, streaming, etc. Only character
  * set supported is UTF-8. Only {@link String} content is supported. All
- * responses are treated as {@link String}s.
+ * responses are treated as {@link String}s. This class is abstract so that
+ * it can be easily extended in an anonymous inner class when constructing
+ * a client.
  * 
  * @author David M. Chandler
  */
-public abstract class AbstractRequestHandler implements RequestHandler {
+public abstract class BasicRequestHandler implements RequestHandler {
 
     /**
      * Opens the connection.
@@ -90,7 +92,7 @@ public abstract class AbstractRequestHandler implements RequestHandler {
      */
     @Override
     public void onError(HttpResponse res, Exception e) {
-        System.out.println("AbstractRequestHandler#onError");
+        System.out.println("BasicRequestHandlerError");
         e.printStackTrace();
     }
 

@@ -1,6 +1,8 @@
 
 package com.turbomanage.httpclient;
 
+import com.turbomanage.httpclient.android.DoHttpRequestTask;
+
 /**
  * An HTTP client that completes all requests asynchronously using
  * {@link DoHttpRequestTask}. All methods take a callback argument which is
@@ -20,23 +22,35 @@ public class AsyncHttpClient extends AbstractHttpClient {
     protected final AsyncRequestExecutorFactory execFactory;
 
     /**
-     * Constructs a new client with empty baseUrl. When used this way, the path
-     * passed to a request method must be the complete URL.
+     * Constructs a new client with factory and empty baseUrl.
+     * 
+     * @param factory
      */
     public AsyncHttpClient(AsyncRequestExecutorFactory factory) {
         this(factory, "");
     }
 
     /**
-     * Constructs a new client using the default {@link RequestHandler} and
-     * {@link RequestLogger}.
+     * Constructs a new client with factory and baseUrl.
+     * 
+     * @param factory
+     * @param baseUrl
      */
     public AsyncHttpClient(AsyncRequestExecutorFactory factory, String baseUrl) {
-        super(baseUrl);
-        this.execFactory = factory;
-        setRequestHandler(new AbstractRequestHandler() {
+        this(factory, baseUrl, new BasicRequestHandler() {
         });
-        setRequestLogger(new ConsoleRequestLogger());
+    }
+    
+    /**
+     * Constructs a new client with factory, baseUrl, and custom {@link RequestHandler}.
+     * 
+     * @param factory
+     * @param baseUrl
+     * @param handler
+     */
+    public AsyncHttpClient(AsyncRequestExecutorFactory factory, String baseUrl, RequestHandler handler) {
+        super(baseUrl, handler);
+        this.execFactory = factory;
     }
 
     /**

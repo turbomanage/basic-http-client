@@ -18,21 +18,30 @@ package com.turbomanage.httpclient;
 public class BasicHttpClient extends AbstractHttpClient {
 
     /**
-     * Constructs a new client with empty baseUrl. When used this way, the path passed
-     * to a request method must be the complete URL.
+     * Constructs the default client with empty baseUrl. 
      */
     public BasicHttpClient() {
         this("");
     }
-
+    
     /**
-     * Constructs a new client using the default {@link RequestHandler} and
-     * {@link RequestLogger}.
+     * Constructs the default client with baseUrl.
+     * 
+     * @param baseUrl
      */
     public BasicHttpClient(String baseUrl) {
-        super(baseUrl);
-        setRequestHandler(new AbstractRequestHandler() {});
-        setRequestLogger(new ConsoleRequestLogger());
+        this(baseUrl, new BasicRequestHandler() {
+        });
+    }
+
+    /**
+     * Constructs a client with baseUrl and custom {@link RequestHandler}.
+     * 
+     * @param baseUrl
+     * @param requestHandler
+     */
+    public BasicHttpClient(String baseUrl, RequestHandler requestHandler) {
+        super(baseUrl, requestHandler);
     }
 
     /**

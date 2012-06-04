@@ -34,12 +34,21 @@ public abstract class AbstractHttpClient {
 
     protected String baseUrl = "";
 
-    protected RequestLogger requestLogger;
-    protected RequestHandler requestHandler;
+    protected RequestLogger requestLogger = new ConsoleRequestLogger();
+    protected final RequestHandler requestHandler;
     private Map<String, String> requestHeaders = new TreeMap<String, String>();
     protected int connectionTimeout = 1000;
     protected int readTimeout = 5000;
 
+    /**
+     * Constructs a client with empty baseUrl. Prevent sub-classes from 
+     * calling this as it doesn't result in an instance of the subclass.
+     */
+    @SuppressWarnings("unused")
+    private AbstractHttpClient() {
+        this("");
+    }
+    
     /**
      * Constructs a new client with base URL that will be appended in the
      * request methods. It may be empty or any part of a URL. Examples:
@@ -48,8 +57,19 @@ public abstract class AbstractHttpClient {
      * 
      * @param baseUrl
      */
-    public AbstractHttpClient(String baseUrl) {
+    private AbstractHttpClient(String baseUrl) {
+        this(baseUrl, new BasicRequestHandler() {});
+    }
+    
+    /**
+     * Construct a client with baseUrl and RequestHandler.
+     * 
+     * @param baseUrl
+     * @param requestHandler
+     */
+    public AbstractHttpClient(String baseUrl, RequestHandler requestHandler) {
         this.baseUrl = baseUrl;
+        this.requestHandler = requestHandler;
     }
 
     /**
@@ -270,10 +290,6 @@ public abstract class AbstractHttpClient {
 
     public void setRequestLogger(RequestLogger logger) {
         this.requestLogger = logger;
-    }
-
-    public void setRequestHandler(RequestHandler requestHandler) {
-        this.requestHandler = requestHandler;
     }
 
     /**
