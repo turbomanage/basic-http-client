@@ -38,6 +38,16 @@ public class AndroidHttpClient extends AsyncHttpClient {
     }
     
     /**
+     * Constructs a client with baseUrl and custom {@link RequestHandler}.
+     * 
+     * @param baseUrl
+     * @param requestHandler
+     */
+    public AndroidHttpClient(String baseUrl, RequestHandler requestHandler) {
+        super(new AsyncTaskFactory(), baseUrl, requestHandler);
+    }
+
+    /**
      * Work around bug in {@link HttpURLConnection} on older versions of
      * Android.
      * http://android-developers.blogspot.com/2011/09/androids-http-clients.html
