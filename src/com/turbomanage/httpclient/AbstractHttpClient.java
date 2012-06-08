@@ -73,6 +73,69 @@ public abstract class AbstractHttpClient {
     }
 
     /**
+     * Execute a GET request and return the response.
+     * 
+     * The supplied parameters are URL encoded and sent as the query string.
+     * 
+     * @param path
+     * @param params
+     * @return Response object
+     */
+    public HttpResponse get(String path, ParameterMap params) {
+        return execute(new HttpGetRequest(path, params));
+    }
+
+    /**
+     * Execute a POST request with parameter map and return the response.
+     * 
+     * @param path
+     * @param params
+     * @return Response object
+     */
+    public HttpResponse post(String path, ParameterMap params) {
+        return execute(new HttpPostRequest(path, params));
+    }
+
+    /**
+     * Execute a POST request with a chunk of data.
+     * 
+     * The supplied parameters are URL encoded and sent as the request content.
+     * 
+     * @param path
+     * @param contentType
+     * @param data
+     * @return Response object
+     */
+    public HttpResponse post(String path, String contentType, byte[] data) {
+        return execute(new HttpPostRequest(path, contentType, data));
+    }
+
+    /**
+     * Execute a PUT request with the supplied content and return the response.
+     * 
+     * @param path
+     * @param contentType
+     * @param data
+     * @return Response object
+     */
+    public HttpResponse put(String path, String contentType, byte[] data) {
+        return execute(new HttpPutRequest(path, contentType, data));
+    }
+
+    /**
+     * Execute a DELETE request and return the response.
+     * 
+     * The supplied parameters are URL encoded and sent as the query string.
+     * 
+     * @param path
+     * @param params
+     * @return Response object
+     */
+    public HttpResponse delete(String path, ParameterMap params) {
+        return execute(new HttpDeleteRequest(path, params));
+    }
+
+    /**
      * This method wraps the call to doHttpMethod and invokes the custom error
      * handler in case of HttpRequestException. It may be overridden by other
      * clients such {@link AsyncHttpClient} in order to wrap the exception
@@ -302,7 +365,7 @@ public abstract class AbstractHttpClient {
     protected boolean isTimeoutException(Throwable t) {
         if (t instanceof SocketTimeoutException || t instanceof ConnectException) {
             // This one happens right away, probably also EHOSTUNREACH
-            // Should we measure elapsed time and return false if it's immediate?
+            // TODO Should we measure elapsed time and return false if it's immediate?
             if (t.getMessage().contains("ECONNREFUSED")) {
                 return false;
             }
