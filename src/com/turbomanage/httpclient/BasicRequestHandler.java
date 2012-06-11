@@ -91,9 +91,18 @@ public abstract class BasicRequestHandler implements RequestHandler {
      *      java.lang.Exception)
      */
     @Override
-    public void onError(HttpResponse res, Exception e) {
+    public boolean onError(HttpRequestException e) {
         System.out.println("BasicRequestHandlerError");
-        e.printStackTrace();
+        HttpResponse res = e.getHttpResponse();
+        if (res != null) {
+            int status = res.getStatus();
+            if (status > 0) {
+                // Perhaps a 404, 501, or something that will be fixed later
+                return true;
+            }
+        }
+        // Connection refused, host unreachable, etc.
+        return false;
     }
 
 }

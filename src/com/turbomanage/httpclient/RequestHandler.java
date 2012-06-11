@@ -74,7 +74,8 @@ public interface RequestHandler {
      * 
      * @param httpResponse The response, may be null
      * @param e The exception that was thrown
+     * @return true if recoverable. Async clients may use this to try again
      */
-    void onError(HttpResponse httpResponse, Exception e);
+    boolean onError(HttpRequestException e);
 
 }

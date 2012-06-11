@@ -9,6 +9,7 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.Map;
@@ -37,18 +38,25 @@ public abstract class AbstractHttpClient {
     protected RequestLogger requestLogger = new ConsoleRequestLogger();
     protected final RequestHandler requestHandler;
     private Map<String, String> requestHeaders = new TreeMap<String, String>();
-    protected int connectionTimeout = 1000;
-    protected int readTimeout = 5000;
+    /**
+     * Default 2s, deliberately short. If you need longer, you should be using
+     * {@link AsyncHttpClient} instead.
+     */
+    protected int connectionTimeout = 2000;
+    /**
+     * Default 8s, reasonably short if accidentally called from the UI thread.
+     */
+    protected int readTimeout = 8000;
 
     /**
-     * Constructs a client with empty baseUrl. Prevent sub-classes from 
-     * calling this as it doesn't result in an instance of the subclass.
+     * Constructs a client with empty baseUrl. Prevent sub-classes from calling
+     * this as it doesn't result in an instance of the subclass.
      */
     @SuppressWarnings("unused")
     private AbstractHttpClient() {
         this("");
     }
-    
+
     /**
      * Constructs a new client with base URL that will be appended in the
      * request methods. It may be empty or any part of a URL. Examples:
@@ -58,9 +66,10 @@ public abstract class AbstractHttpClient {
      * @param baseUrl
      */
     private AbstractHttpClient(String baseUrl) {
-        this(baseUrl, new BasicRequestHandler() {});
+        this(baseUrl, new BasicRequestHandler() {
+        });
     }
-    
+
     /**
      * Construct a client with baseUrl and RequestHandler.
      * 
@@ -73,9 +82,8 @@ public abstract class AbstractHttpClient {
     }
 
     /**
-     * Execute a GET request and return the response.
-     * 
-     * The supplied parameters are URL encoded and sent as the query string.
+     * Execute a GET request and return the response. The supplied parameters
+     * are URL encoded and sent as the query string.
      * 
      * @param path
      * @param params
@@ -97,9 +105,8 @@ public abstract class AbstractHttpClient {
     }
 
     /**
-     * Execute a POST request with a chunk of data.
-     * 
-     * The supplied parameters are URL encoded and sent as the request content.
+     * Execute a POST request with a chunk of data. The supplied parameters are
+     * URL encoded and sent as the request content.
      * 
      * @param path
      * @param contentType
@@ -123,9 +130,8 @@ public abstract class AbstractHttpClient {
     }
 
     /**
-     * Execute a DELETE request and return the response.
-     * 
-     * The supplied parameters are URL encoded and sent as the query string.
+     * Execute a DELETE request and return the response. The supplied parameters
+     * are URL encoded and sent as the query string.
      * 
      * @param path
      * @param params
@@ -137,12 +143,12 @@ public abstract class AbstractHttpClient {
 
     /**
      * This method wraps the call to doHttpMethod and invokes the custom error
-     * handler in case of HttpRequestException. It may be overridden by other
-     * clients such {@link AsyncHttpClient} in order to wrap the exception
-     * handling for purposes of retries, etc.
+     * handler in case of exception. It may be overridden by other clients such
+     * {@link AsyncHttpClient} in order to wrap the exception handling for
+     * purposes of retries, etc.
      * 
      * @param httpRequest
-     * @return Response object
+     * @return Response object (may be null if request did not complete)
      */
     public HttpResponse execute(HttpRequest httpRequest) {
         HttpResponse httpResponse = null;
@@ -150,8 +156,11 @@ public abstract class AbstractHttpClient {
             httpResponse = doHttpMethod(httpRequest.getPath(),
                     httpRequest.getHttpMethod(), httpRequest.getContentType(),
                     httpRequest.getContent());
+        } catch (HttpRequestException hre) {
+            requestHandler.onError(hre);
         } catch (Exception e) {
-            requestHandler.onError(httpResponse, e);
+            // In case a RuntimeException has leaked out, wrap it in HRE
+            requestHandler.onError(new HttpRequestException(e, httpResponse));
         }
         return httpResponse;
     }
@@ -166,7 +175,7 @@ public abstract class AbstractHttpClient {
      * @param contentType MIME type of the request
      * @param content Request data
      * @return Response object
-     * @throws HttpRequestException 
+     * @throws HttpRequestException
      */
     protected HttpResponse doHttpMethod(String path, HttpMethod httpMethod, String contentType,
             byte[] content) throws HttpRequestException {
@@ -239,7 +248,8 @@ public abstract class AbstractHttpClient {
      * @param uc
      * @param content
      * @return request status
-     * @throws Exception in order to force calling code to deal with possible NPEs also
+     * @throws Exception in order to force calling code to deal with possible
+     *             NPEs also
      */
     protected int writeOutputStream(HttpURLConnection uc, byte[] content) throws Exception {
         OutputStream out = null;
@@ -361,19 +371,38 @@ public abstract class AbstractHttpClient {
             CookieHandler.setDefault(new CookieManager());
         }
     }
-    
-    protected boolean isTimeoutException(Throwable t) {
-        if (t instanceof SocketTimeoutException || t instanceof ConnectException) {
-            // This one happens right away, probably also EHOSTUNREACH
-            // TODO Should we measure elapsed time and return false if it's immediate?
-            if (t.getMessage().contains("ECONNREFUSED")) {
-                return false;
+
+    /**
+     * Determines whether an exception was due to a timeout. If the elapsed time
+     * is longer than the current timeout, the exception is assumed to be the
+     * result of the timeout.
+     * 
+     * @param t Any Throwable
+     * @return true if caused by connection or read timeout
+     */
+    protected boolean isTimeoutException(Throwable t, long startTime) {
+        long elapsedTime = System.currentTimeMillis() - startTime + 10; // fudge
+        System.out.println("ELAPSED TIME = " + elapsedTime + ", CT = " + connectionTimeout
+                + ", RT = " + readTimeout);
+        if (t instanceof ConnectException || t instanceof SocketException
+                || t instanceof SocketTimeoutException) {
+            // TODO pass another arg indicating whether connection made
+            StackTraceElement[] stackTrace = t.getStackTrace();
+            for (StackTraceElement at : stackTrace) {
+                String methodName = at.getMethodName();
+                if ("connect".equalsIgnoreCase(methodName)) {
+                    return (elapsedTime) >= connectionTimeout;
+                } else if ("read".equals(methodName)) {
+                    return (elapsedTime) >= readTimeout;
+                }
             }
-            return true;
+            return false;
         } else if (t.getCause() == null) {
+            // reached bottom of stack
             return false;
         } else {
-            return isTimeoutException(t.getCause());
+            // walk exception stack
+            return isTimeoutException(t.getCause(), startTime);
         }
     }
 
@@ -381,6 +410,13 @@ public abstract class AbstractHttpClient {
         return connectionTimeout;
     }
 
+    /**
+     * Sets the connection timeout in ms. This is the amount of time that
+     * {@link HttpURLConnection} will wait to successfully connect to the remote
+     * server. The read timeout begins once connection has been established.
+     * 
+     * @param connectionTimeout
+     */
     public void setConnectionTimeout(int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
@@ -389,6 +425,13 @@ public abstract class AbstractHttpClient {
         return readTimeout;
     }
 
+    /**
+     * Sets the read timeout in ms, which begins after connection has been made.
+     * For large amounts of data expected, bump this up to make sure you allow
+     * adequate time to receive it.
+     * 
+     * @param readTimeout
+     */
     public void setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
     }

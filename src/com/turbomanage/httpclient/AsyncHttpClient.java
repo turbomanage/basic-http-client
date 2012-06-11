@@ -13,6 +13,15 @@ import com.turbomanage.httpclient.android.DoHttpRequestTask;
  */
 public class AsyncHttpClient extends AbstractHttpClient {
 
+    static int[] fib = new int[20]; 
+    static {
+        // Compute Fibonacci series for backoff
+        for (int i=0; i<20; i++) {
+            fib[i] = i<2 ? i : fib[i-2] + fib[i-1];
+        }
+    }
+    
+    // Configurable default
     private int maxRetries = 3;
     /*
      * The factory that will be used to obtain an async wrapper for the
@@ -142,11 +151,14 @@ public class AsyncHttpClient extends AbstractHttpClient {
      * @throws HttpRequestException
      */
     public HttpResponse tryMany(HttpRequest httpRequest) throws HttpRequestException {
-        int n = getMaxRetries();
+        int numTries = 0;
+        long startTime = System.currentTimeMillis();
         HttpResponse res = null;
-        while (n > 0) {
+        while (numTries < maxRetries) {
             try {
-                System.out.println("n=" + n + " Trying " + httpRequest.getPath());
+                setConnectionTimeout(getNextTimeout(numTries));
+                System.out.println("n=" + numTries + "<" + maxRetries + " Trying " + httpRequest.getPath());
+                startTime = System.currentTimeMillis();
                 res = doHttpMethod(httpRequest.getPath(),
                         httpRequest.getHttpMethod(), httpRequest.getContentType(),
                         httpRequest.getContent());
@@ -154,25 +166,56 @@ public class AsyncHttpClient extends AbstractHttpClient {
                     return res;
                 }
             } catch (HttpRequestException e) {
-                if (isTimeoutException(e)) {
-                    // try again with exponential backoff
-                    setConnectionTimeout(connectionTimeout * 2);
+                if (isTimeoutException(e, startTime)) {
+                    // Fall through loop, retry
                 } else {
-                    requestHandler.onError(res, e);
-                    // rethrow to caller
-                    throw e;
+                    boolean isRecoverable = requestHandler.onError(e);
+                    if (isRecoverable) {
+                        // Wait a while and fall through loop to try again
+                        try {
+                            Thread.sleep(connectionTimeout);
+                        } catch (InterruptedException ie) {
+                            // App stopping, perhaps? No point in further retries
+                            throw e;
+                        }
+                    } else {
+                        // Not recoverable, time to bail
+                        throw e;
+                    }
                 }
             }
-            n--;
+            numTries++;
         }
         return null;
+    }
+
+    /**
+     * Implements exponential backoff using the Fibonacci series, which
+     * has the effect of backing off with a multiplier of ~1.618
+     * (the golden mean) instead of 2, which is rather boring.
+     * 
+     * @param numTries Current number of attempts completed
+     * @return Connection timeout in ms for next attempt
+     */
+    protected int getNextTimeout(int numTries) {
+        // For n=0,1,2,3 returns 1000,2000,3000,5000
+        return 1000 * fib[numTries + 2];
     }
 
     public int getMaxRetries() {
         return maxRetries;
     }
 
+    /**
+     * Set maximum number of retries to attempt, capped at 18. On the
+     * 18th retry, the connection timeout will be 4,181 sec = 1 hr 9 min.
+     * 
+     * @param maxRetries
+     */
     public void setMaxRetries(int maxRetries) {
+        if (maxRetries < 1 || maxRetries > 18) {
+            throw new IllegalArgumentException("Maximum retries must be between 1 and 18");
+        }
         this.maxRetries = maxRetries;
     }
 
