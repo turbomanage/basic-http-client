@@ -157,7 +157,9 @@ public class AsyncHttpClient extends AbstractHttpClient {
         while (numTries < maxRetries) {
             try {
                 setConnectionTimeout(getNextTimeout(numTries));
-                System.out.println("n=" + numTries + "<" + maxRetries + " Trying " + httpRequest.getPath());
+                if (requestLogger.isLoggingEnabled()) {
+                    requestLogger.log((numTries+1) + "of" + maxRetries + ", trying " + httpRequest.getPath());
+                }
                 startTime = System.currentTimeMillis();
                 res = doHttpMethod(httpRequest.getPath(),
                         httpRequest.getHttpMethod(), httpRequest.getContentType(),

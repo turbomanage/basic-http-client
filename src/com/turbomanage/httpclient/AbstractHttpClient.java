@@ -4,13 +4,10 @@ package com.turbomanage.httpclient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.ConnectException;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
@@ -47,6 +44,10 @@ public abstract class AbstractHttpClient {
      * Default 8s, reasonably short if accidentally called from the UI thread.
      */
     protected int readTimeout = 8000;
+    /**
+     * Indicates connection status, used by timeout logic
+     */
+    private boolean isConnected;
 
     /**
      * Constructs a client with empty baseUrl. Prevent sub-classes from calling
@@ -184,12 +185,17 @@ public abstract class AbstractHttpClient {
         HttpResponse httpResponse = null;
 
         try {
+            isConnected = false;
             uc = openConnection(path);
             prepareConnection(uc, httpMethod, contentType);
             appendRequestHeaders(uc);
             if (requestLogger.isLoggingEnabled()) {
                 requestLogger.logRequest(uc, content);
             }
+            // Explicit connect not required, but lets us easily determine when
+            // possible timeout exception occurred
+            uc.connect();
+            isConnected = true;
             if (uc.getDoOutput() && content != null) {
                 int status = writeOutputStream(uc, content);
             }
@@ -382,30 +388,17 @@ public abstract class AbstractHttpClient {
      */
     protected boolean isTimeoutException(Throwable t, long startTime) {
         long elapsedTime = System.currentTimeMillis() - startTime + 10; // fudge
-        System.out.println("ELAPSED TIME = " + elapsedTime + ", CT = " + connectionTimeout
-                + ", RT = " + readTimeout);
-        if (t instanceof ConnectException || t instanceof SocketException
-                || t instanceof SocketTimeoutException) {
-            // TODO pass another arg indicating whether connection made
-            StackTraceElement[] stackTrace = t.getStackTrace();
-            for (StackTraceElement at : stackTrace) {
-                String methodName = at.getMethodName();
-                if ("connect".equalsIgnoreCase(methodName)) {
-                    return (elapsedTime) >= connectionTimeout;
-                } else if ("read".equals(methodName)) {
-                    return (elapsedTime) >= readTimeout;
-                }
-            }
-            return false;
-        } else if (t.getCause() == null) {
-            // reached bottom of stack
-            return false;
+        if (requestLogger.isLoggingEnabled()) {
+            requestLogger.log("ELAPSED TIME = " + elapsedTime + ", CT = " + connectionTimeout
+                    + ", RT = " + readTimeout);
+        }
+        if (isConnected) {
+            return elapsedTime >= readTimeout;
         } else {
-            // walk exception stack
-            return isTimeoutException(t.getCause(), startTime);
+            return elapsedTime >= connectionTimeout;
         }
     }
-
+    
     public int getConnectionTimeout() {
         return connectionTimeout;
     }

@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * Default {@link RequestLogger} used by {@link BasicHttpClient}. In recent
- * versions of Android, System.out.println() gets directed to LogCat so this can
+ * versions of Android, log() gets directed to LogCat so this can
  * work for Android, too.
  * http://stackoverflow.com/questions/2220547/why-doesnt-system
  * -out-println-work-in-android
@@ -25,6 +25,14 @@ public class ConsoleRequestLogger implements RequestLogger {
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see com.turbomanage.httpclient.RequestLogger#log(java.lang.String)
+     */
+    @Override
+    public void log(String msg) {
+        System.out.println(msg);
+    }
+
     /*
      * (non-Javadoc)
      * @see com.turbomanage.httpclient.RequestLogger#logRequest(java.net.
@@ -32,10 +40,10 @@ public class ConsoleRequestLogger implements RequestLogger {
      */
     @Override
     public void logRequest(HttpURLConnection uc, Object content) throws IOException {
-        System.out.println("=== HTTP Request ===");
-        System.out.println("send url: " + uc.getURL().toString());
+        log("=== HTTP Request ===");
+        log("Send url: " + uc.getURL().toString());
         if (content instanceof String) {
-            System.out.println("Content: " + (String) content);
+            log("Content: " + (String) content);
         }
         logHeaders(uc.getRequestProperties());
     }
@@ -48,11 +56,11 @@ public class ConsoleRequestLogger implements RequestLogger {
     @Override
     public void logResponse(HttpResponse res) {
         if (res != null) {
-            System.out.println("=== HTTP Response ===");
-            System.out.println("receive url: " + res.getUrl());
-            System.out.println("status: " + res.getStatus());
+            log("=== HTTP Response ===");
+            log("Receive url: " + res.getUrl());
+            log("Status: " + res.getStatus());
             logHeaders(res.getHeaders());
-            System.out.println("Content:\n" + res.getBodyAsString());
+            log("Content:\n" + res.getBodyAsString());
         }
     }
 
@@ -66,7 +74,7 @@ public class ConsoleRequestLogger implements RequestLogger {
             for (String field : map.keySet()) {
                 List<String> headers = map.get(field);
                 for (String header : headers) {
-                    System.out.println(field + ":" + header);
+                    log(field + ":" + header);
                 }
             }
         }

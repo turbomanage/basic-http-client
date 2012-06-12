@@ -17,6 +17,13 @@ public interface RequestLogger {
      * @return true if enabled
      */
     boolean isLoggingEnabled();
+    
+    /**
+     * Writes a log message.
+     * 
+     * @param msg
+     */
+    void log(String msg);
 
     /**
      * Log the HTTP request and content to be sent with the request.
@@ -34,5 +41,5 @@ public interface RequestLogger {
      * @throws IOException
      */
     void logResponse(HttpResponse httpResponse);
-
+    
 }

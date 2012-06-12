@@ -21,6 +21,24 @@ import java.net.URL;
  */
 public abstract class BasicRequestHandler implements RequestHandler {
 
+    private final RequestLogger logger;
+
+    /**
+     * Constructs a handler with default logger.
+     */
+    public BasicRequestHandler() {
+        this(new ConsoleRequestLogger());
+    }
+    
+    /**
+     * Constructs a handler with supplied logger.
+     * 
+     * @param logger
+     */
+    public BasicRequestHandler(RequestLogger logger) {
+        this.logger = logger;
+    }
+
     /**
      * Opens the connection.
      * 
@@ -85,15 +103,18 @@ public abstract class BasicRequestHandler implements RequestHandler {
     }
 
     /**
-     * Just prints a stack trace.
+     * Allows recovery attempt from conditions which return HTTP status codes 
      * 
      * @see com.turbomanage.httpclient.RequestHandler#onError(java.net.HttpURLConnection,
      *      java.lang.Exception)
      */
     @Override
     public boolean onError(HttpRequestException e) {
-        System.out.println("BasicRequestHandlerError");
         HttpResponse res = e.getHttpResponse();
+        if (logger.isLoggingEnabled()) {
+            logger.log("BasicRequestHandler.onError got");
+            e.printStackTrace();
+        }
         if (res != null) {
             int status = res.getStatus();
             if (status > 0) {
