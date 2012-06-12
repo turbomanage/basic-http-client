@@ -104,7 +104,11 @@ public class ParameterMap implements Map<String, String> {
             String value = map.get(key);
             if (value != null) {
                 sb.append("=");
-                sb.append(URLEncoder.encode(value));
+                try {
+                    sb.append(URLEncoder.encode(value, RequestHandler.UTF8));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return sb.toString();

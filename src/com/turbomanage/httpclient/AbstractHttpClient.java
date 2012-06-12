@@ -178,6 +178,7 @@ public abstract class AbstractHttpClient {
      * @return Response object
      * @throws HttpRequestException
      */
+    @SuppressWarnings("finally")
     protected HttpResponse doHttpMethod(String path, HttpMethod httpMethod, String contentType,
             byte[] content) throws HttpRequestException {
 
@@ -197,7 +198,7 @@ public abstract class AbstractHttpClient {
             uc.connect();
             isConnected = true;
             if (uc.getDoOutput() && content != null) {
-                int status = writeOutputStream(uc, content);
+                writeOutputStream(uc, content);
             }
             httpResponse = readInputStream(uc);
         } catch (Exception e) {
