@@ -168,20 +168,21 @@ public class AsyncHttpClient extends AbstractHttpClient {
                     return res;
                 }
             } catch (HttpRequestException e) {
-                if (isTimeoutException(e, startTime)) {
+                if (isTimeoutException(e, startTime) && numTries < (maxRetries-1)) {
                     // Fall through loop, retry
+                    // On last attempt, throw the exception regardless
                 } else {
                     boolean isRecoverable = requestHandler.onError(e);
-                    if (isRecoverable) {
-                        // Wait a while and fall through loop to try again
+                    if (isRecoverable && numTries < (maxRetries-1)) {
                         try {
+                            // Wait a while and fall through loop to try again
                             Thread.sleep(connectionTimeout);
                         } catch (InterruptedException ie) {
                             // App stopping, perhaps? No point in further retries
                             throw e;
                         }
                     } else {
-                        // Not recoverable, time to bail
+                        // Not recoverable or last attempt, time to bail
                         throw e;
                     }
                 }
