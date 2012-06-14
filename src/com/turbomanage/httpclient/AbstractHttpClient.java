@@ -118,26 +118,16 @@ public abstract class AbstractHttpClient {
     }
 
     /**
-     * Execute a PUT request with parameter map and return the response.
-     * 
-     * @param path
-     * @param params
-     * @return Response object
-     */
-    public HttpResponse put(String path, ParameterMap params) {
-        return execute(new HttpPut(path, params));
-    }
-
-    /**
      * Execute a PUT request with the supplied content and return the response.
      * 
      * @param path
+     * @param params Optional, appended to query string
      * @param contentType
      * @param data
      * @return Response object
      */
-    public HttpResponse put(String path, String contentType, byte[] data) {
-        return execute(new HttpPut(path, contentType, data));
+    public HttpResponse put(String path, ParameterMap params, String contentType, byte[] data) {
+        return execute(new HttpPut(path, params, contentType, data));
     }
 
     /**

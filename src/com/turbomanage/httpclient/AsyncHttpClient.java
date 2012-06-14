@@ -103,29 +103,17 @@ public class AsyncHttpClient extends AbstractHttpClient {
     }
 
     /**
-     * Execute a PUT request with parameter map and invoke the callback on
-     * completion.
-     * 
-     * @param path
-     * @param params
-     * @param callback
-     */
-    public void put(String path, ParameterMap params, AsyncCallback callback) {
-        HttpRequest req = new HttpPut(path, params);
-        executeAsync(req, callback);
-    }
-
-    /**
      * Execute a PUT request with the supplied content and invoke the callback
      * on completion.
      * 
      * @param path
+     * @param params Optional, appended to query string
      * @param contentType
      * @param data
      * @param callback
      */
-    public void put(String path, String contentType, byte[] data, AsyncCallback callback) {
-        HttpRequest req = new HttpPut(path, contentType, data);
+    public void put(String path, ParameterMap params, String contentType, byte[] data, AsyncCallback callback) {
+        HttpRequest req = new HttpPut(path, params, contentType, data);
         executeAsync(req, callback);
     }
 

@@ -8,33 +8,21 @@ package com.turbomanage.httpclient;
 public class HttpPut extends HttpRequest {
 
     /**
-     * Constructs an HTTP PUT request with name-value pairs to
-     * be sent in URL encoded format.
-     * 
-     * @param path Partial URL
-     * @param params Name-value pairs to be sent in the request body
-     */
-    public HttpPut(String path, ParameterMap params) {
-        super();
-        this.httpMethod = HttpMethod.PUT;
-        this.path = path;
-        this.contentType = URLENCODED;
-        if (params != null) {
-            this.content = params.urlEncodedBytes();
-        }
-    }
-
-    /**
      * Constructs an HTTP PUT request with arbitrary content.
      * 
      * @param path Partial URL
+     * @param params Optional, appended to query string
      * @param contentType MIME type
      * @param data Content to be sent in the request body
      */
-    public HttpPut(String path, String contentType, byte[] data) {
+    public HttpPut(String path, ParameterMap params, String contentType, byte[] data) {
         super();
         this.httpMethod = HttpMethod.PUT;
-        this.path = path;
+        String queryString = null;
+        if (params != null) {
+            queryString = params.urlEncode();
+        }
+        this.path = path + "?" + queryString;
         this.contentType = contentType;
         this.content = data;
     }
