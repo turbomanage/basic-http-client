@@ -8,14 +8,11 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 
-
 /**
- * Interface that defines the request lifecycle used by {@link BasicHttpClient}.
+ * Interface that defines the request lifecycle used by {@link AbstractHttpClient}.
  * RequestHandler is composed of many sub-interfaces so that each handler can 
- * be set independently if needed. You can provide your own implementation by calling
- * {@link BasicHttpClient#setRequestInterceptor(RequestInterceptor)} or set
- * the individual handlers independently like
- * {@link BasicHttpClient#setHttpErrorHandler(HttpErrorHandler)}.
+ * be set independently if needed. You can provide your own implementation by providing
+ * it in the client constructor.
  * 
  * See {@link BasicRequestHandler} for a simple implementation.
  * 
@@ -72,7 +69,6 @@ public interface RequestHandler {
      * {@link ConnectException}
      * {@link SocketTimeoutException}
      * 
-     * @param httpResponse The response, may be null
      * @param e The exception that was thrown
      * @return true if recoverable. Async clients may use this to try again
      */

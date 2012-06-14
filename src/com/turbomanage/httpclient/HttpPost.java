@@ -5,7 +5,7 @@ package com.turbomanage.httpclient;
  * 
  * @author David M. Chandler
  */
-public class HttpPostRequest extends HttpRequest {
+public class HttpPost extends HttpRequest {
 
     /**
      * Constructs an HTTP POST request with name-value pairs to
@@ -14,7 +14,7 @@ public class HttpPostRequest extends HttpRequest {
      * @param path Partial URL
      * @param params Name-value pairs to be sent in the request body
      */
-    public HttpPostRequest(String path, ParameterMap params) {
+    public HttpPost(String path, ParameterMap params) {
         super();
         this.httpMethod = HttpMethod.POST;
         this.path = path;
@@ -31,7 +31,7 @@ public class HttpPostRequest extends HttpRequest {
      * @param contentType MIME type
      * @param data Content to be sent in the request body
      */
-    public HttpPostRequest(String path, String contentType, byte[] data) {
+    public HttpPost(String path, String contentType, byte[] data) {
         super();
         this.httpMethod = HttpMethod.POST;
         this.path = path;

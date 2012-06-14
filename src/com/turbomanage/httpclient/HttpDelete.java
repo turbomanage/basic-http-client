@@ -1,21 +1,21 @@
 package com.turbomanage.httpclient;
 
 /**
- * An HTTP GET request.
+ * An HTTP DELETE request.
  * 
  * @author David M. Chandler
  */
-public class HttpGetRequest extends HttpRequest {
+public class HttpDelete extends HttpRequest {
 
     /**
-     * Constructs an HTTP GET request.
+     * Constructs an HTTP DELETE request.
      * 
      * @param path Partial URL
      * @param params Name-value pairs to be appended to the URL
      */
-    public HttpGetRequest(String path, ParameterMap params) {
+    public HttpDelete(String path, ParameterMap params) {
         super();
-        this.httpMethod = HttpMethod.GET;
+        this.httpMethod = HttpMethod.DELETE;
         String queryString = null;
         if (params != null) {
             queryString = params.urlEncode();

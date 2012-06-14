@@ -92,7 +92,7 @@ public class ParameterMap implements Map<String, String> {
     /**
      * Returns URL encoded data
      * 
-     * @return
+     * @return URL encoded String
      */
     public String urlEncode() {
         StringBuilder sb = new StringBuilder();

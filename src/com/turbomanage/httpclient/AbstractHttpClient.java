@@ -91,7 +91,7 @@ public abstract class AbstractHttpClient {
      * @return Response object
      */
     public HttpResponse get(String path, ParameterMap params) {
-        return execute(new HttpGetRequest(path, params));
+        return execute(new HttpGet(path, params));
     }
 
     /**
@@ -102,12 +102,11 @@ public abstract class AbstractHttpClient {
      * @return Response object
      */
     public HttpResponse post(String path, ParameterMap params) {
-        return execute(new HttpPostRequest(path, params));
+        return execute(new HttpPost(path, params));
     }
 
     /**
-     * Execute a POST request with a chunk of data. The supplied parameters are
-     * URL encoded and sent as the request content.
+     * Execute a POST request with a chunk of data and return the response.
      * 
      * @param path
      * @param contentType
@@ -115,7 +114,18 @@ public abstract class AbstractHttpClient {
      * @return Response object
      */
     public HttpResponse post(String path, String contentType, byte[] data) {
-        return execute(new HttpPostRequest(path, contentType, data));
+        return execute(new HttpPost(path, contentType, data));
+    }
+
+    /**
+     * Execute a PUT request with parameter map and return the response.
+     * 
+     * @param path
+     * @param params
+     * @return Response object
+     */
+    public HttpResponse put(String path, ParameterMap params) {
+        return execute(new HttpPut(path, params));
     }
 
     /**
@@ -127,7 +137,7 @@ public abstract class AbstractHttpClient {
      * @return Response object
      */
     public HttpResponse put(String path, String contentType, byte[] data) {
-        return execute(new HttpPutRequest(path, contentType, data));
+        return execute(new HttpPut(path, contentType, data));
     }
 
     /**
@@ -139,7 +149,7 @@ public abstract class AbstractHttpClient {
      * @return Response object
      */
     public HttpResponse delete(String path, ParameterMap params) {
-        return execute(new HttpDeleteRequest(path, params));
+        return execute(new HttpDelete(path, params));
     }
 
     /**
@@ -364,7 +374,7 @@ public abstract class AbstractHttpClient {
      * 
      * @param name
      * @param value
-     * @return
+     * @return this client for method chaining
      */
     public AbstractHttpClient addHeader(String name, String value) {
         requestHeaders.put(name, value);

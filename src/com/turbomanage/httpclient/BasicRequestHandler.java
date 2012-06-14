@@ -39,11 +39,6 @@ public abstract class BasicRequestHandler implements RequestHandler {
         this.logger = logger;
     }
 
-    /**
-     * Opens the connection.
-     * 
-     * @see com.turbomanage.httpclient.RequestHandler#openConnection(java.lang.String)
-     */
     @Override
     public HttpURLConnection openConnection(String urlString) throws IOException {
         URL url = new URL(urlString);
@@ -51,13 +46,6 @@ public abstract class BasicRequestHandler implements RequestHandler {
         return uc;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * com.turbomanage.httpclient.RequestHandler#prepareConnection(java.net
-     * .HttpURLConnection, com.turbomanage.httpclient.HttpMethod,
-     * java.lang.String)
-     */
     @Override
     public void prepareConnection(HttpURLConnection urlConnection, HttpMethod httpMethod,
             String contentType) throws IOException {
@@ -71,24 +59,11 @@ public abstract class BasicRequestHandler implements RequestHandler {
         urlConnection.setRequestProperty("Accept-Charset", UTF8);
     }
 
-    /**
-     * Writes a {@link String}. Override this method to handle other content
-     * types.
-     * 
-     * @see com.turbomanage.httpclient.RequestHandler#writeStream(java.io.OutputStream,
-     *      byte[])
-     */
     @Override
     public void writeStream(OutputStream out, byte[] content) throws IOException {
         out.write(content);
     }
 
-    /**
-     * Reads the input into a {@link String}. Override this method to handle
-     * other content types.
-     * 
-     * @see com.turbomanage.httpclient.RequestHandler#readStream(java.io.InputStream)
-     */
     @Override
     public byte[] readStream(InputStream in) throws IOException {
         int nRead;
@@ -102,12 +77,6 @@ public abstract class BasicRequestHandler implements RequestHandler {
         return buffer.toByteArray();
     }
 
-    /**
-     * Allows recovery attempt from conditions which return HTTP status codes 
-     * 
-     * @see com.turbomanage.httpclient.RequestHandler#onError(java.net.HttpURLConnection,
-     *      java.lang.Exception)
-     */
     @Override
     public boolean onError(HttpRequestException e) {
         HttpResponse res = e.getHttpResponse();

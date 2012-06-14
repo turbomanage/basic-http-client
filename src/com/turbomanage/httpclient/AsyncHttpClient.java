@@ -71,7 +71,7 @@ public class AsyncHttpClient extends AbstractHttpClient {
      * @param callback
      */
     public void get(String path, ParameterMap params, AsyncCallback callback) {
-        HttpRequest req = new HttpGetRequest(path, params);
+        HttpRequest req = new HttpGet(path, params);
         executeAsync(req, callback);
     }
 
@@ -84,7 +84,7 @@ public class AsyncHttpClient extends AbstractHttpClient {
      * @param callback
      */
     public void post(String path, ParameterMap params, AsyncCallback callback) {
-        HttpRequest req = new HttpPostRequest(path, params);
+        HttpRequest req = new HttpPost(path, params);
         executeAsync(req, callback);
     }
 
@@ -98,7 +98,20 @@ public class AsyncHttpClient extends AbstractHttpClient {
      * @param callback
      */
     public void post(String path, String contentType, byte[] data, AsyncCallback callback) {
-        HttpPostRequest req = new HttpPostRequest(path, contentType, data);
+        HttpPost req = new HttpPost(path, contentType, data);
+        executeAsync(req, callback);
+    }
+
+    /**
+     * Execute a PUT request with parameter map and invoke the callback on
+     * completion.
+     * 
+     * @param path
+     * @param params
+     * @param callback
+     */
+    public void put(String path, ParameterMap params, AsyncCallback callback) {
+        HttpRequest req = new HttpPut(path, params);
         executeAsync(req, callback);
     }
 
@@ -112,7 +125,7 @@ public class AsyncHttpClient extends AbstractHttpClient {
      * @param callback
      */
     public void put(String path, String contentType, byte[] data, AsyncCallback callback) {
-        HttpPutRequest req = new HttpPutRequest(path, contentType, data);
+        HttpRequest req = new HttpPut(path, contentType, data);
         executeAsync(req, callback);
     }
 
@@ -125,7 +138,7 @@ public class AsyncHttpClient extends AbstractHttpClient {
      * @param callback
      */
     public void delete(String path, ParameterMap params, AsyncCallback callback) {
-        HttpDeleteRequest req = new HttpDeleteRequest(path, params);
+        HttpDelete req = new HttpDelete (path, params);
         executeAsync(req, callback);
     }
 
@@ -147,7 +160,7 @@ public class AsyncHttpClient extends AbstractHttpClient {
      * it to the callback's onError method.
      * 
      * @param httpRequest
-     * @return
+     * @return Response object, may be null
      * @throws HttpRequestException
      */
     public HttpResponse tryMany(HttpRequest httpRequest) throws HttpRequestException {
