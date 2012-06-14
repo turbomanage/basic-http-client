@@ -3,17 +3,19 @@ package com.turbomanage.httpclient;
 
 
 /**
- * Basic HTTP client that facilitates simple GET, POST, PUT, and DELETE
- * requests. To handle response types other than String, extend
- * {@link AbstractHttpClient} instead of this class. To implement buffering,
- * streaming, or set other request properties, set an alternate
- * {@link RequestHandler}.
+ * Minimal HTTP client that facilitates simple GET, POST, PUT, and DELETE
+ * requests. To implement buffering, streaming, or set other request properties, 
+ * set an alternate {@link RequestHandler}.
+ * 
+ * <p>Sample usage:</p>
+ * <pre>
+ *    BasicHttpClient httpClient = new BasicHttpClient("http://www.google.com");
+ *    ParameterMap params = httpClient.newParams().add("q", "GOOG");
+ *    HttpResponse httpResponse = httpClient.get("/finance", params);
+ *    System.out.println(httpResponse.getBodyAsString());
+ * </pre>
  * 
  * @author David M. Chandler
- */
-/**
- * @author David M. Chandler
- *
  */
 public class BasicHttpClient extends AbstractHttpClient {
 

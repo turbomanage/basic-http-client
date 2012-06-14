@@ -205,10 +205,6 @@ public class AsyncHttpClient extends AbstractHttpClient {
         return 1000 * fib[numTries + 2];
     }
 
-    public int getMaxRetries() {
-        return maxRetries;
-    }
-
     /**
      * Set maximum number of retries to attempt, capped at 18. On the
      * 18th retry, the connection timeout will be 4,181 sec = 1 hr 9 min.

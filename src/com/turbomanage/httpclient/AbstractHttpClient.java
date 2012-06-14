@@ -221,6 +221,15 @@ public abstract class AbstractHttpClient {
         return httpResponse;
     }
 
+    /**
+     * Validates a URL and opens a connection. This does not actually connect
+     * to a server, but rather opens it on the client only to allow writing
+     * to begin. Delegates the open operation to the {@link RequestHandler}.
+     * 
+     * @param path Appended to this client's baseUrl
+     * @return An open connection (or null)
+     * @throws IOException
+     */
     protected HttpURLConnection openConnection(String path) throws IOException {
         String requestUrl = baseUrl + path;
         try {
@@ -252,20 +261,22 @@ public abstract class AbstractHttpClient {
     }
 
     /**
-     * @param uc
-     * @param content
-     * @return request status
+     * Writes the request to the server. Delegates I/O to the {@link RequestHandler}.
+     * 
+     * @param urlConnection
+     * @param content to be written
+     * @return HTTP status code
      * @throws Exception in order to force calling code to deal with possible
      *             NPEs also
      */
-    protected int writeOutputStream(HttpURLConnection uc, byte[] content) throws Exception {
+    protected int writeOutputStream(HttpURLConnection urlConnection, byte[] content) throws Exception {
         OutputStream out = null;
         try {
-            out = uc.getOutputStream();
+            out = urlConnection.getOutputStream();
             if (out != null) {
                 requestHandler.writeStream(out, content);
             }
-            return uc.getResponseCode();
+            return urlConnection.getResponseCode();
         } finally {
             // catch not necessary since method throws Exception
             if (out != null) {
@@ -278,15 +289,22 @@ public abstract class AbstractHttpClient {
         }
     }
 
-    protected HttpResponse readInputStream(HttpURLConnection uc) throws Exception {
+    /**
+     * Reads the input stream. Delegates I/O to the {@link RequestHandler}.
+     * 
+     * @param urlConnection
+     * @return HttpResponse, may be null
+     * @throws Exception
+     */
+    protected HttpResponse readInputStream(HttpURLConnection urlConnection) throws Exception {
         InputStream in = null;
         byte[] responseBody = null;
         try {
-            in = uc.getInputStream();
+            in = urlConnection.getInputStream();
             if (in != null) {
                 responseBody = requestHandler.readStream(in);
             }
-            return new HttpResponse(uc, responseBody);
+            return new HttpResponse(urlConnection, responseBody);
         } finally {
             if (in != null) {
                 try {
@@ -298,15 +316,23 @@ public abstract class AbstractHttpClient {
         }
     }
 
-    protected HttpResponse readErrorStream(HttpURLConnection uc) throws Exception {
+    /**
+     * Reads the error stream to get an HTTP status code like 404.
+     * Delegates I/O to the {@link RequestHandler}.
+     * 
+     * @param urlConnection
+     * @return HttpResponse, may be null
+     * @throws Exception
+     */
+    protected HttpResponse readErrorStream(HttpURLConnection urlConnection) throws Exception {
         InputStream err = null;
         byte[] responseBody = null;
         try {
-            err = uc.getErrorStream();
+            err = urlConnection.getErrorStream();
             if (err != null) {
                 responseBody = requestHandler.readStream(err);
             }
-            return new HttpResponse(uc, responseBody);
+            return new HttpResponse(urlConnection, responseBody);
         } finally {
             if (err != null) {
                 try {
@@ -364,6 +390,11 @@ public abstract class AbstractHttpClient {
         return (CookieManager) CookieHandler.getDefault();
     }
 
+    /**
+     * Sets the logger to be used for each request. 
+     * 
+     * @param logger
+     */
     public void setRequestLogger(RequestLogger logger) {
         this.requestLogger = logger;
     }
@@ -400,10 +431,6 @@ public abstract class AbstractHttpClient {
         }
     }
     
-    public int getConnectionTimeout() {
-        return connectionTimeout;
-    }
-
     /**
      * Sets the connection timeout in ms. This is the amount of time that
      * {@link HttpURLConnection} will wait to successfully connect to the remote
@@ -413,10 +440,6 @@ public abstract class AbstractHttpClient {
      */
     public void setConnectionTimeout(int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
-    }
-
-    public int getReadTimeout() {
-        return readTimeout;
     }
 
     /**

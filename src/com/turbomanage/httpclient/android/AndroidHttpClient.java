@@ -10,8 +10,33 @@ import com.turbomanage.httpclient.RequestLogger;
 import java.net.HttpURLConnection;
 
 /**
- * HTTP client that can safely be used by Android code on or off
- * the UI thread. Wraps each request in an {@link AsyncTask}.
+ * HTTP client for Android providing both synchronous (blocking) and asynchronous
+ * interfaces so it can be used on or off the UI thread.
+ * 
+ * <p>Sample usage:</p>
+ * 
+ * <p>Synchronous (for use off the UI thread in an {@link AsyncTask} or {@link Runnable})</p>
+ * <pre>
+ *    AndroidHttpClient httpClient = new AndroidHttpClient("http://www.google.com");
+ *    ParameterMap params = httpClient.newParams().add("q", "GOOG");
+ *    HttpResponse httpResponse = httpClient.get("/finance", params);
+ *    System.out.println(httpResponse.getBodyAsString());
+ * </pre>
+ * 
+ * <p>Asynchronous (can be used anywhere, automatically wraps in an {@link AsyncTask})</p>
+ * <pre>
+ *    AndroidHttpClient httpClient = new AndroidHttpClient("http://www.google.com");
+ *    ParameterMap params = httpClient.newParams().add("q", "GOOG");
+ *    httpClient.setMaxRetries(3);
+ *    httpClient.get("/finance", params, new AsyncCallback() {
+ *        public void onComplete(HttpResponse httpResponse) {
+ *            System.out.println(httpResponse.getBodyAsString());
+ *        }
+ *        public void onError(Exception e) {
+ *            e.printStackTrace();
+ *        }
+ *    });
+ * </pre>
  * 
  * @author David M. Chandler
  */
