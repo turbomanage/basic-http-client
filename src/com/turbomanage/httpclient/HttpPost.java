@@ -9,10 +9,10 @@ public class HttpPost extends HttpRequest {
 
     /**
      * Constructs an HTTP POST request with name-value pairs to
-     * be sent in URL encoded format.
+     * be sent in the request BODY.
      * 
      * @param path Partial URL
-     * @param params Name-value pairs to be sent in the request body
+     * @param params Name-value pairs to be sent in request BODY
      */
     public HttpPost(String path, ParameterMap params) {
         super();
@@ -26,15 +26,25 @@ public class HttpPost extends HttpRequest {
     
     /**
      * Constructs an HTTP POST request with arbitrary content.
+     * If params is non-null, the name-value pairs will be appended to the QUERY STRING
+     * while the content is sent in the request BODY.
+     * This is not a common use case and is therefore not represented in the post()
+     * methods in {@link AbstractHttpClient} or {@link AsyncHttpClient}, 
+     * but is nevertheless possible using this constructor.
      * 
      * @param path Partial URL
+     * @param params Optional name-value pairs to be appended to QUERY STRING
      * @param contentType MIME type
      * @param data Content to be sent in the request body
      */
-    public HttpPost(String path, String contentType, byte[] data) {
+    public HttpPost(String path, ParameterMap params, String contentType, byte[] data) {
         super();
         this.httpMethod = HttpMethod.POST;
-        this.path = path;
+        String queryString = null;
+        if (params != null) {
+            queryString = params.urlEncode();
+        }
+        this.path = path + "?" + queryString;
         this.contentType = contentType;
         this.content = data;
     }

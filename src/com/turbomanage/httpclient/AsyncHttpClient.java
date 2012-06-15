@@ -92,13 +92,17 @@ public class AsyncHttpClient extends AbstractHttpClient {
      * Execute a POST request with a chunk of data and invoke the callback on
      * completion.
      * 
+     * To include name-value pairs in the query string, add them to the path
+     * argument or use the constructor in {@link HttpPost}. This is not a 
+     * common use case, so it is not included here.
+     * 
      * @param path
      * @param contentType
      * @param data
      * @param callback
      */
     public void post(String path, String contentType, byte[] data, AsyncCallback callback) {
-        HttpPost req = new HttpPost(path, contentType, data);
+        HttpPost req = new HttpPost(path, null, contentType, data);
         executeAsync(req, callback);
     }
 
@@ -106,14 +110,17 @@ public class AsyncHttpClient extends AbstractHttpClient {
      * Execute a PUT request with the supplied content and invoke the callback
      * on completion.
      * 
+     * To include name-value pairs in the query string, add them to the path
+     * argument or use the constructor in {@link HttpPut}. This is not a 
+     * common use case, so it is not included here.
+     * 
      * @param path
-     * @param params Optional, appended to query string
      * @param contentType
      * @param data
      * @param callback
      */
-    public void put(String path, ParameterMap params, String contentType, byte[] data, AsyncCallback callback) {
-        HttpRequest req = new HttpPut(path, params, contentType, data);
+    public void put(String path, String contentType, byte[] data, AsyncCallback callback) {
+        HttpRequest req = new HttpPut(path, null, contentType, data);
         executeAsync(req, callback);
     }
 
