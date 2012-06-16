@@ -11,7 +11,8 @@ public enum HttpMethod {
     GET(false),
     POST(true),
     PUT(true),
-    DELETE(false);
+    DELETE(false),
+    HEAD(false);
     
     private boolean doOutput;
     

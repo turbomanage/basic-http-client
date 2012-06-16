@@ -63,6 +63,19 @@ public class AsyncHttpClient extends AbstractHttpClient {
     }
 
     /**
+     * Execute a HEAD request and invoke the callback on completion. The supplied
+     * parameters are URL encoded and sent as the query string.
+     * 
+     * @param path
+     * @param params
+     * @param callback
+     */
+    public void head(String path, ParameterMap params, AsyncCallback callback) {
+        HttpRequest req = new HttpHead(path, params);
+        executeAsync(req, callback);
+    }
+
+    /**
      * Execute a GET request and invoke the callback on completion. The supplied
      * parameters are URL encoded and sent as the query string.
      * 

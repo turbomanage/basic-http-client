@@ -83,6 +83,18 @@ public abstract class AbstractHttpClient {
     }
 
     /**
+     * Execute a HEAD request and return the response. The supplied parameters
+     * are URL encoded and sent as the query string.
+     * 
+     * @param path
+     * @param params
+     * @return Response object
+     */
+    public HttpResponse head(String path, ParameterMap params) {
+        return execute(new HttpHead(path, params));
+    }
+
+    /**
      * Execute a GET request and return the response. The supplied parameters
      * are URL encoded and sent as the query string.
      * 

@@ -41,7 +41,7 @@ public class ConsoleRequestLogger implements RequestLogger {
     @Override
     public void logRequest(HttpURLConnection uc, Object content) throws IOException {
         log("=== HTTP Request ===");
-        log("Send url: " + uc.getURL().toString());
+        log(uc.getRequestMethod() + " " + uc.getURL().toString());
         if (content instanceof String) {
             log("Content: " + (String) content);
         }
