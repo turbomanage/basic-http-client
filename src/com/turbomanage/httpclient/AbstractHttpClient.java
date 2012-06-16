@@ -215,6 +215,10 @@ public abstract class AbstractHttpClient {
             } catch (Exception ee) {
                 // Must catch IOException, but swallow to show first cause only
             } finally {
+                // if status available, return it else throw
+                if (httpResponse != null && httpResponse.getStatus() > 0) {
+                    return httpResponse;
+                }
                 throw new HttpRequestException(e, httpResponse);
             }
         } finally {
