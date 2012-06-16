@@ -8,16 +8,22 @@ package com.turbomanage.httpclient;
  * @author David M. Chandler
  */
 public enum HttpMethod {
-    GET(false),
-    POST(true),
-    PUT(true),
-    DELETE(false),
-    HEAD(false);
+    GET(true, false),
+    POST(true, true),
+    PUT(true, true),
+    DELETE(true, false),
+    HEAD(false, false);
     
+    private boolean doInput;
     private boolean doOutput;
     
-    private HttpMethod(boolean doOutput) {
+    private HttpMethod(boolean doInput, boolean doOutput) {
+        this.doInput = doInput;
         this.doOutput = doOutput;
+    }
+
+    public boolean getDoInput() {
+        return doInput;
     }
 
     /**
@@ -37,4 +43,5 @@ public enum HttpMethod {
     public String getMethodName() {
         return this.toString();
     }
+
 }

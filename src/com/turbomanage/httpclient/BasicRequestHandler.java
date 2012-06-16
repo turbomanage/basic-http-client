@@ -52,6 +52,7 @@ public abstract class BasicRequestHandler implements RequestHandler {
         // Configure connection for request method
         urlConnection.setRequestMethod(httpMethod.getMethodName());
         urlConnection.setDoOutput(httpMethod.getDoOutput());
+        urlConnection.setDoInput(httpMethod.getDoInput());
         if (contentType != null) {
             urlConnection.setRequestProperty("Content-Type", contentType);
         }

@@ -219,12 +219,17 @@ public abstract class AbstractHttpClient {
             if (uc.getDoOutput() && content != null) {
                 writeOutputStream(uc, content);
             }
-            httpResponse = readInputStream(uc);
+            if (uc.getDoInput()) {
+                httpResponse = readInputStream(uc);
+            } else {
+                httpResponse = new HttpResponse(uc, null);
+            }
         } catch (Exception e) {
             // Try reading the error stream to populate status code such as 404
             try {
                 httpResponse = readErrorStream(uc);
             } catch (Exception ee) {
+                e.printStackTrace();
                 // Must catch IOException, but swallow to show first cause only
             } finally {
                 // if status available, return it else throw
