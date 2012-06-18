@@ -14,13 +14,8 @@ public class HttpDelete extends HttpRequest {
      * @param params Name-value pairs to be appended to the URL
      */
     public HttpDelete(String path, ParameterMap params) {
-        super();
+        super(path, params);
         this.httpMethod = HttpMethod.DELETE;
-        String queryString = null;
-        if (params != null) {
-            queryString = params.urlEncode();
-        }
-        this.path = path + "?" + queryString;
     }
 
 }

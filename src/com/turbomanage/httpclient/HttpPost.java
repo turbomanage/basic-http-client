@@ -15,7 +15,7 @@ public class HttpPost extends HttpRequest {
      * @param params Name-value pairs to be sent in request BODY
      */
     public HttpPost(String path, ParameterMap params) {
-        super();
+        super(path, null);
         this.httpMethod = HttpMethod.POST;
         this.path = path;
         this.contentType = URLENCODED;
@@ -38,13 +38,8 @@ public class HttpPost extends HttpRequest {
      * @param data Content to be sent in the request body
      */
     public HttpPost(String path, ParameterMap params, String contentType, byte[] data) {
-        super();
+        super(path, params);
         this.httpMethod = HttpMethod.POST;
-        String queryString = null;
-        if (params != null) {
-            queryString = params.urlEncode();
-        }
-        this.path = path + "?" + queryString;
         this.contentType = contentType;
         this.content = data;
     }
