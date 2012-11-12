@@ -12,19 +12,23 @@ import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
 
+import android.os.Build;
+
 /**
  * Lightweight HTTP client that facilitates GET, POST, PUT, and DELETE requests
  * using {@link HttpURLConnection}. Extend this class to support specialized
  * content and response types (see {@link BasicHttpClient} for an example). To
  * enable streaming, buffering, or other types of readers / writers, set an
  * alternate {@link RequestHandler}.
- * 
+ *
  * @author David M. Chandler
  */
 public abstract class AbstractHttpClient {
 
     static {
-        ensureCookieManager();
+    		// See http://code.google.com/p/basic-http-client/issues/detail?id=8
+    		if (Build.VERSION.SDK_INT > 8)
+    			ensureCookieManager();
     }
 
     public static final String URLENCODED = "application/x-www-form-urlencoded;charset=UTF-8";
@@ -63,7 +67,7 @@ public abstract class AbstractHttpClient {
      * request methods. It may be empty or any part of a URL. Examples:
      * http://turbomanage.com http://turbomanage.com:987
      * http://turbomanage.com:987/resources
-     * 
+     *
      * @param baseUrl
      */
     private AbstractHttpClient(String baseUrl) {
@@ -73,7 +77,7 @@ public abstract class AbstractHttpClient {
 
     /**
      * Construct a client with baseUrl and RequestHandler.
-     * 
+     *
      * @param baseUrl
      * @param requestHandler
      */
@@ -85,7 +89,7 @@ public abstract class AbstractHttpClient {
     /**
      * Execute a HEAD request and return the response. The supplied parameters
      * are URL encoded and sent as the query string.
-     * 
+     *
      * @param path
      * @param params
      * @return Response object
@@ -97,7 +101,7 @@ public abstract class AbstractHttpClient {
     /**
      * Execute a GET request and return the response. The supplied parameters
      * are URL encoded and sent as the query string.
-     * 
+     *
      * @param path
      * @param params
      * @return Response object
@@ -108,7 +112,7 @@ public abstract class AbstractHttpClient {
 
     /**
      * Execute a POST request with parameter map and return the response.
-     * 
+     *
      * @param path
      * @param params
      * @return Response object
@@ -119,11 +123,11 @@ public abstract class AbstractHttpClient {
 
     /**
      * Execute a POST request with a chunk of data and return the response.
-     * 
+     *
      * To include name-value pairs in the query string, add them to the path
-     * argument or use the constructor in {@link HttpPost}. This is not a 
+     * argument or use the constructor in {@link HttpPost}. This is not a
      * common use case, so it is not included here.
-     * 
+     *
      * @param path
      * @param contentType
      * @param data
@@ -135,11 +139,11 @@ public abstract class AbstractHttpClient {
 
     /**
      * Execute a PUT request with the supplied content and return the response.
-     * 
+     *
      * To include name-value pairs in the query string, add them to the path
-     * argument or use the constructor in {@link HttpPut}. This is not a 
+     * argument or use the constructor in {@link HttpPut}. This is not a
      * common use case, so it is not included here.
-     * 
+     *
      * @param path
      * @param contentType
      * @param data
@@ -152,7 +156,7 @@ public abstract class AbstractHttpClient {
     /**
      * Execute a DELETE request and return the response. The supplied parameters
      * are URL encoded and sent as the query string.
-     * 
+     *
      * @param path
      * @param params
      * @return Response object
@@ -166,7 +170,7 @@ public abstract class AbstractHttpClient {
      * handler in case of exception. It may be overridden by other clients such
      * {@link AsyncHttpClient} in order to wrap the exception handling for
      * purposes of retries, etc.
-     * 
+     *
      * @param httpRequest
      * @return Response object (may be null if request did not complete)
      */
@@ -189,7 +193,7 @@ public abstract class AbstractHttpClient {
      * This is the method that drives each request. It implements the request
      * lifecycle defined as open, prepare, write, read. Each of these methods in
      * turn delegates to the {@link RequestHandler} associated with this client.
-     * 
+     *
      * @param path Whole or partial URL string, will be appended to baseUrl
      * @param httpMethod Request method
      * @param contentType MIME type of the request
@@ -253,7 +257,7 @@ public abstract class AbstractHttpClient {
      * Validates a URL and opens a connection. This does not actually connect
      * to a server, but rather opens it on the client only to allow writing
      * to begin. Delegates the open operation to the {@link RequestHandler}.
-     * 
+     *
      * @param path Appended to this client's baseUrl
      * @return An open connection (or null)
      * @throws IOException
@@ -278,7 +282,7 @@ public abstract class AbstractHttpClient {
     /**
      * Append all headers added with {@link #addHeader(String, String)} to the
      * request.
-     * 
+     *
      * @param urlConnection
      */
     private void appendRequestHeaders(HttpURLConnection urlConnection) {
@@ -290,7 +294,7 @@ public abstract class AbstractHttpClient {
 
     /**
      * Writes the request to the server. Delegates I/O to the {@link RequestHandler}.
-     * 
+     *
      * @param urlConnection
      * @param content to be written
      * @return HTTP status code
@@ -319,7 +323,7 @@ public abstract class AbstractHttpClient {
 
     /**
      * Reads the input stream. Delegates I/O to the {@link RequestHandler}.
-     * 
+     *
      * @param urlConnection
      * @return HttpResponse, may be null
      * @throws Exception
@@ -347,7 +351,7 @@ public abstract class AbstractHttpClient {
     /**
      * Reads the error stream to get an HTTP status code like 404.
      * Delegates I/O to the {@link RequestHandler}.
-     * 
+     *
      * @param urlConnection
      * @return HttpResponse, may be null
      * @throws Exception
@@ -374,7 +378,7 @@ public abstract class AbstractHttpClient {
 
     /**
      * Convenience method creates a new ParameterMap to hold query params
-     * 
+     *
      * @return Parameter map
      */
     public ParameterMap newParams() {
@@ -389,7 +393,7 @@ public abstract class AbstractHttpClient {
      * so they may supplement or replace headers which have already been set.
      * Calls to {@link #addHeader(String, String)} may be chained. To clear all
      * headers added with this method, call {@link #clearHeaders()}.
-     * 
+     *
      * @param name
      * @param value
      * @return this client for method chaining
@@ -411,7 +415,7 @@ public abstract class AbstractHttpClient {
 
     /**
      * Returns the {@link CookieManager} associated with this client.
-     * 
+     *
      * @return CookieManager
      */
     public static CookieManager getCookieManager() {
@@ -419,8 +423,8 @@ public abstract class AbstractHttpClient {
     }
 
     /**
-     * Sets the logger to be used for each request. 
-     * 
+     * Sets the logger to be used for each request.
+     *
      * @param logger
      */
     public void setRequestLogger(RequestLogger logger) {
@@ -442,7 +446,7 @@ public abstract class AbstractHttpClient {
      * Determines whether an exception was due to a timeout. If the elapsed time
      * is longer than the current timeout, the exception is assumed to be the
      * result of the timeout.
-     * 
+     *
      * @param t Any Throwable
      * @return true if caused by connection or read timeout
      */
@@ -458,12 +462,12 @@ public abstract class AbstractHttpClient {
             return elapsedTime >= connectionTimeout;
         }
     }
-    
+
     /**
      * Sets the connection timeout in ms. This is the amount of time that
      * {@link HttpURLConnection} will wait to successfully connect to the remote
      * server. The read timeout begins once connection has been established.
-     * 
+     *
      * @param connectionTimeout
      */
     public void setConnectionTimeout(int connectionTimeout) {
@@ -474,7 +478,7 @@ public abstract class AbstractHttpClient {
      * Sets the read timeout in ms, which begins after connection has been made.
      * For large amounts of data expected, bump this up to make sure you allow
      * adequate time to receive it.
-     * 
+     *
      * @param readTimeout
      */
     public void setReadTimeout(int readTimeout) {
