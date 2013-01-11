@@ -16,7 +16,7 @@ import java.net.URL;
  * responses are treated as {@link String}s. This class is abstract so that
  * it can be easily extended in an anonymous inner class when constructing
  * a client.
- * 
+ *
  * @author David M. Chandler
  */
 public abstract class BasicRequestHandler implements RequestHandler {
@@ -29,10 +29,10 @@ public abstract class BasicRequestHandler implements RequestHandler {
     public BasicRequestHandler() {
         this(new ConsoleRequestLogger());
     }
-    
+
     /**
      * Constructs a handler with supplied logger.
-     * 
+     *
      * @param logger
      */
     public BasicRequestHandler(RequestLogger logger) {
@@ -61,8 +61,20 @@ public abstract class BasicRequestHandler implements RequestHandler {
     }
 
     @Override
+    public OutputStream openOutput(HttpURLConnection urlConnection)
+    		throws IOException {
+    		return urlConnection.getOutputStream();
+    }
+
+    @Override
     public void writeStream(OutputStream out, byte[] content) throws IOException {
         out.write(content);
+    }
+
+    @Override
+    public InputStream openInput(HttpURLConnection urlConnection)
+    		throws IOException {
+    		return urlConnection.getInputStream();
     }
 
     @Override
