@@ -12,8 +12,6 @@ import java.net.URL;
 import java.util.Map;
 import java.util.TreeMap;
 
-import android.os.Build;
-
 /**
  * Lightweight HTTP client that facilitates GET, POST, PUT, and DELETE requests
  * using {@link HttpURLConnection}. Extend this class to support specialized
@@ -24,12 +22,6 @@ import android.os.Build;
  * @author David M. Chandler
  */
 public abstract class AbstractHttpClient {
-
-    static {
-    		// See http://code.google.com/p/basic-http-client/issues/detail?id=8
-    		if (Build.VERSION.SDK_INT > 8)
-    			ensureCookieManager();
-    }
 
     public static final String URLENCODED = "application/x-www-form-urlencoded;charset=UTF-8";
     public static final String MULTIPART = "multipart/form-data";

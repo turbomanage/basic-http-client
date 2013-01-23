@@ -12,9 +12,9 @@ import java.net.HttpURLConnection;
 /**
  * HTTP client for Android providing both synchronous (blocking) and asynchronous
  * interfaces so it can be used on or off the UI thread.
- * 
+ *
  * <p>Sample usage:</p>
- * 
+ *
  * <p>Synchronous (for use off the UI thread in an {@link AsyncTask} or {@link Runnable})</p>
  * <pre>
  *    AndroidHttpClient httpClient = new AndroidHttpClient("http://www.google.com");
@@ -22,7 +22,7 @@ import java.net.HttpURLConnection;
  *    HttpResponse httpResponse = httpClient.get("/finance", params);
  *    System.out.println(httpResponse.getBodyAsString());
  * </pre>
- * 
+ *
  * <p>Asynchronous (can be used anywhere, automatically wraps in an {@link AsyncTask})</p>
  * <pre>
  *    AndroidHttpClient httpClient = new AndroidHttpClient("http://www.google.com");
@@ -37,15 +37,18 @@ import java.net.HttpURLConnection;
  *        }
  *    });
  * </pre>
- * 
+ *
  * @author David M. Chandler
  */
 public class AndroidHttpClient extends AsyncHttpClient {
 
     static {
         disableConnectionReuseIfNecessary();
+        // See http://code.google.com/p/basic-http-client/issues/detail?id=8
+        if (Build.VERSION.SDK_INT > 8)
+        		ensureCookieManager();
     }
-    
+
     /**
      * Constructs a new client with empty baseUrl. When used this way, the path
      * passed to a request method must be the complete URL.
@@ -61,10 +64,10 @@ public class AndroidHttpClient extends AsyncHttpClient {
     public AndroidHttpClient(String baseUrl) {
         super(new AsyncTaskFactory(), baseUrl);
     }
-    
+
     /**
      * Constructs a client with baseUrl and custom {@link RequestHandler}.
-     * 
+     *
      * @param baseUrl
      * @param requestHandler
      */
