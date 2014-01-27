@@ -82,7 +82,7 @@ public class AndroidHttpClient extends AsyncHttpClient {
      */
     private static void disableConnectionReuseIfNecessary() {
         // HTTP connection reuse which was buggy pre-froyo
-        if (Integer.parseInt(Build.VERSION.SDK) < Build.VERSION_CODES.FROYO) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
             System.setProperty("http.keepAlive", "false");
         }
     }
