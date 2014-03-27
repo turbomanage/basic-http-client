@@ -2,8 +2,11 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Users/drfibonacci/android-sdk-macosx/platforms/android-8/android.jar"/>
+	<classpathentry kind="lib" path="/Users/david/adt-bundle-mac-x86_64-20130729/sdk/platforms/android-8/android.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/servlet-api-2.5.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry exported="true" kind="lib" path="lib/jackson-annotations-2.3.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jackson-core-2.3.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jackson-databind-2.3.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

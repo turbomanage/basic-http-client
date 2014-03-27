@@ -25,6 +25,7 @@ public abstract class AbstractHttpClient {
 
     public static final String URLENCODED = "application/x-www-form-urlencoded;charset=UTF-8";
     public static final String MULTIPART = "multipart/form-data";
+    public static final String JSON = "application/json;charset=UTF-8";
 
     protected String baseUrl = "";
 
