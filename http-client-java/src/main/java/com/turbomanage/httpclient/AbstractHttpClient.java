@@ -429,7 +429,7 @@ public abstract class AbstractHttpClient {
      * necessary to enable all Web requests within the app to automatically send
      * and receive cookies.
      */
-    protected static void ensureCookieManager() {
+    public static void ensureCookieManager() {
         if (CookieHandler.getDefault() == null) {
             CookieHandler.setDefault(new CookieManager());
         }

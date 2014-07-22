@@ -4,12 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.turbomanage</groupId>
-        <artifactId>basic-http-client</artifactId>
+        <groupId>com.turbomanage.basic-http-client</groupId>
+        <artifactId>http-client</artifactId>
         <version>0.89</version>
     </parent>
 
-    <groupId>com.turbomanage</groupId>
+    <groupId>com.turbomanage.basic-http-client</groupId>
     <artifactId>http-client-android</artifactId>
     <packaging>jar</packaging>
     <version>0.89</version>
@@ -46,7 +46,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.turbomanage</groupId>
+            <groupId>com.turbomanage.basic-http-client</groupId>
             <artifactId>http-client-java</artifactId>
             <version>${project.parent.version}</version>
         </dependency>

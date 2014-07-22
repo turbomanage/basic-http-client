@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.turbomanage</groupId>
-        <artifactId>basic-http-client</artifactId>
+        <groupId>com.turbomanage.basic-http-client</groupId>
+        <artifactId>http-client</artifactId>
         <version>0.89</version>
     </parent>
 

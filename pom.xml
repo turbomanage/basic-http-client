@@ -9,8 +9,8 @@
         <version>7</version>
     </parent>
 
-    <groupId>com.turbomanage</groupId>
-    <artifactId>basic-http-client</artifactId>
+    <groupId>com.turbomanage.basic-http-client</groupId>
+    <artifactId>http-client</artifactId>
     <packaging>pom</packaging>
     <version>0.89</version>
 
