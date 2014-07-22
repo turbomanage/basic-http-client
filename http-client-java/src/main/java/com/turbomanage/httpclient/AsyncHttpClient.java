@@ -1,7 +1,6 @@
 
 package com.turbomanage.httpclient;
 
-import com.turbomanage.httpclient.android.DoHttpRequestTask;
 
 /**
  * An HTTP client that completes all requests asynchronously using

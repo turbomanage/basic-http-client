@@ -1,1 +1,10 @@
-/bin
+**/.navigation
+**/.settings/*
+**/.classpath
+**/.project
+.DS_Store
+.idea
+*.iml
+target
+build
+.gradle

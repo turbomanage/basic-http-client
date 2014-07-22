@@ -19,10 +19,6 @@ package com.turbomanage.httpclient;
  */
 public class BasicHttpClient extends AbstractHttpClient {
 
-    static {
-		ensureCookieManager();
-    }
-
     /**
      * Constructs the default client with empty baseUrl.
      */

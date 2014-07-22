@@ -10,14 +10,15 @@ import com.turbomanage.httpclient.HttpResponse;
  * 
  * @author David M. Chandler
  */
-public abstract class RestRequestHandler {
+public abstract class ResultHandler {
 
     /**
      * Called when response is available 
      * 
      * @param httpResponse may be null!
+     * @return true if object conversion should proceed
      */
-    public abstract void onSuccess(HttpResponse httpResponse);
+    public abstract boolean onResult(HttpResponse httpResponse);
     
     /**
      * Called when a non-recoverable exception has occurred.
