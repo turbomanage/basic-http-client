@@ -37,31 +37,31 @@ dependencies {
 ```java
 // Example code to login to App Engine dev server
 public void loginDev(String userEmail) {
-    BasicHttpClient httpClient # new BasicHttpClient("http://localhost:8888");
-    ParameterMap params # httpClient.newParams()
+    BasicHttpClient httpClient = new BasicHttpClient("http://localhost:8888");
+    ParameterMap params = httpClient.newParams()
             .add("continue", "/")
             .add("email", userEmail)
             .add("action", "Log In");
     httpClient.addHeader("name", "value");
     httpClient.setConnectionTimeout(2000);
-    HttpResponse httpResponse # httpClient.post("/_ah/login", params);
+    HttpResponse httpResponse = httpClient.post("/_ah/login", params);
 }
 
 // Example code to log in to App Engine production app
 public void loginProd(String authToken) {
-    BasicHttpClient httpClient # new BasicHttpClient("http://localhost:8888");
-    ParameterMap params # httpClient.newParams()
+    BasicHttpClient httpClient = new BasicHttpClient("http://localhost:8888");
+    ParameterMap params = httpClient.newParams()
             .add("auth", authToken);
-    HttpResponse httpResponse # httpClient.get("/_ah/login", params);
+    HttpResponse httpResponse = httpClient.get("/_ah/login", params);
     System.out.println(httpResponse.getBodyAsString());
 }
 ```
 ##Making Asynchronous Requests##
 The project includes an !AsyncTask wrapper for Android so that requests can be safely initiated on the UI thread with a callback. Example:
 ```java
-AndroidHttpClient httpClient # new AndroidHttpClient("http://192.168.1.1:8888");
+AndroidHttpClient httpClient = new AndroidHttpClient("http://192.168.1.1:8888");
 httpClient.setMaxRetries(5);
-ParameterMap params # httpClient.newParams()
+ParameterMap params = httpClient.newParams()
         .add("continue", "/")
         .add("email", "test@example.com")
         .add("action", "Log In");
@@ -92,7 +92,7 @@ AbstractHttpClient.ensureCookieManager();
 The key method is [AbstractHttpClient](https://github.com/turbomanage/basic-http-client/blob/master/http-client-java/src/main/java/com/turbomanage/httpclient/AbstractHttpClient.java).doHttpMethod(String path, [HttpMethod](https://github.com/turbomanage/basic-http-client/blob/master/http-client-java/src/main/java/com/turbomanage/httpclient/HttpMethod.java) httpMethod, String contentType, byte[] content). This is the method that actually drives each request, catches any exceptions, and rethrows them wrapped in an [HttpRequestException](https://github.com/turbomanage/basic-http-client/blob/master/http-client-java/src/main/java/com/turbomanage/httpclient/HttpRequestException.java). It delegates most of the request lifecycle to a [RequestHandler](https://github.com/turbomanage/basic-http-client/blob/master/http-client-java/src/main/java/com/turbomanage/httpclient/RequestHandler.java) instance. To override the default behaviors (say, to provide your own error handler or custom stream reader/writer), simply extend the [BasicRequestHandler](https://github.com/turbomanage/basic-http-client/blob/master/http-client-java/src/main/java/com/turbomanage/httpclient/BasicRequestHandler.java) like this:
 
 ```java
-        BasicHttpClient client # new BasicHttpClient(baseUrl, new BasicRequestHandler() {
+        BasicHttpClient client = new BasicHttpClient(baseUrl, new BasicRequestHandler() {
             @Override
             public boolean onError(HttpResponse res, Exception e) {
                 e.printStackTrace();
