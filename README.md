@@ -6,7 +6,7 @@ A minimal HTTP client that uses java.net.HttpURLConnection to make requests. It 
 
 ##Lightning Start##
   1. Download one of the jars at left and add it to your lib or libs (Android) folder
-  1. (Android only) Add `<uses-permission android:name#"android.permission.INTERNET" />` to !AndroidManifest.xml
+  1. (Android only) Add `<uses-permission android:name="android.permission.INTERNET" />` to !AndroidManifest.xml
 
 ##Quick Start##
   1. `git clone https://github.com/turbomanage/basic-http-client.git`
