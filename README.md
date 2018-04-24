@@ -29,7 +29,7 @@ If your Android project builds with Gradle, add this to your app's gradle.build:
 ```gradle
 dependencies {
     ...
-    compile 'com.turbomanage.basic-http-client:http-client-android:0.89'
+    implementation 'com.turbomanage.basic-http-client:http-client-android:0.89'
 }
 ```
 
