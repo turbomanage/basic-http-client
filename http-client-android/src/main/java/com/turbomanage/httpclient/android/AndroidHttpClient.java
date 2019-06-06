@@ -88,3 +88,4 @@ public class AndroidHttpClient extends AsyncHttpClient {
     }
 
 }
+https://github.com/turbomanage/basic-http-client/issues/13#issuecomment-78614736
